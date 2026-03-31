@@ -1,0 +1,1269 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aarav & Anu - Wedding Invitation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --gold: #FFD700;
+            --cyan: #00FFFF;
+        }
+        * {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .serif {
+            font-family: 'Playfair Display', serif;
+        }
+        body {
+            background: #020210;
+            overflow-x: hidden;
+        }
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .glass-strong {
+            background: rgba(10, 10, 20, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .glow-gold {
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3), 0 0 40px rgba(255, 215, 0, 0.1);
+        }
+        .glow-cyan {
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), 0 0 40px rgba(0, 255, 255, 0.1);
+        }
+        .text-glow {
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+        .timeline-line {
+            background: linear-gradient(180deg, var(--gold), var(--cyan));
+            width: 2px;
+        }
+        .timeline-dot {
+            background: radial-gradient(circle, var(--gold) 0%, var(--cyan) 100%);
+            box-shadow: 0 0 20px var(--gold);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #020210; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(var(--gold), var(--cyan)); border-radius: 10px; }
+        
+        /* 3D Gallery */
+        .carousel-3d {
+            perspective: 1500px;
+            transform-style: preserve-3d;
+        }
+        .carousel-inner {
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        .carousel-item {
+            position: absolute;
+            backface-visibility: hidden;
+            transition: all 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        
+        /* Scroll Progress Bar */
+        #scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(to right, var(--gold), var(--cyan));
+            z-index: 1000;
+            transition: width 0.1s;
+        }
+
+        /* Shimmering Text Effect */
+        .animate-gradient {
+            background-size: 200% auto;
+            animation: shine 4s linear infinite;
+        }
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        /* Floating Heart Click Effect */
+        .floating-heart {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            animation: floatUp 1.5s ease-out forwards;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.5); opacity: 1; }
+            100% { transform: translateY(-100px) scale(1.2); opacity: 0; }
+        }
+
+        /* Custom Cursor */
+        @media (min-width: 768px) {
+            #custom-cursor {
+                position: fixed;
+                pointer-events: none;
+                z-index: 99999;
+                width: 24px;
+                height: 24px;
+                border: 2px solid var(--gold);
+                border-radius: 50%;
+                transform: translate(-50%, -50%);
+                transition: width 0.2s, height 0.2s, background-color 0.2s, border-color 0.2s;
+                box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            }
+            .cursor-hover {
+                width: 45px !important;
+                height: 45px !important;
+                background-color: rgba(0, 255, 255, 0.1);
+                border-color: var(--cyan) !important;
+                box-shadow: 0 0 20px rgba(0, 255, 255, 0.5) !important;
+            }
+        }
+
+        /* 3D Gatefold Utilities */
+        .perspective-2000 {
+            perspective: 2000px;
+        }
+        .preserve-3d {
+            transform-style: preserve-3d;
+        }
+
+        /* Force Landscape Overlay */
+        #landscape-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #020210;
+            z-index: 9999999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        @media (max-width: 899px) and (orientation: portrait) {
+            #landscape-overlay {
+                display: flex;
+            }
+            body {
+                overflow: hidden !important;
+            }
+        }
+        .rotate-phone-icon {
+            animation: phoneRotate 2s infinite cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        @keyframes phoneRotate {
+            0% { transform: rotate(0deg); }
+            50%, 100% { transform: rotate(-90deg); }
+        }
+    </style>
+</head>
+<body class="text-white antialiased">
+    <!-- Force Landscape Overlay -->
+    <div id="landscape-overlay">
+        <div class="w-24 h-24 glass rounded-3xl flex items-center justify-center mb-8 glow-gold shadow-[0_0_50px_rgba(255,215,0,0.2)]">
+            <i class="fas fa-mobile-screen text-5xl text-yellow-300 rotate-phone-icon drop-shadow-[0_0_15px_rgba(255,215,0,0.8)]"></i>
+        </div>
+        <h2 class="serif text-3xl md:text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-amber-500 tracking-wide">Rotate Your Phone</h2>
+        <p class="text-white/60 max-w-sm text-sm leading-relaxed">For the perfect cinematic experience, please view this invitation in landscape (horizontal) mode.</p>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div id="custom-cursor" class="hidden md:block"></div>
+
+    <!-- Scroll Progress Bar -->
+    <div id="scroll-progress"></div>
+
+    <!-- Welcome Overlay (Audio Autoplay Fix) -->
+    <div id="welcomeOverlay" class="fixed inset-0 z-[200] bg-[#020210]/95 backdrop-blur-md flex items-center justify-center transition-opacity duration-1000 perspective-2000">
+        
+        <!-- Gatefold Wrapper -->
+        <div id="inviteWrapper" class="relative w-[300px] h-[420px] md:w-[360px] md:h-[500px] cursor-pointer group preserve-3d transition-transform duration-700 hover:scale-[1.02]">
+            
+            <!-- Inside Card -->
+            <div class="absolute inset-0 bg-[#0a0a14] rounded-xl border border-white/10 shadow-[0_0_50px_rgba(255,215,0,0.1)] flex flex-col items-center justify-center p-8 text-center overflow-hidden z-10">
+                <div class="absolute inset-0 bg-gradient-to-br from-yellow-500/10 to-cyan-500/10 z-0"></div>
+                <!-- Golden inner border -->
+                <div class="absolute inset-3 border border-yellow-500/20 rounded-lg pointer-events-none"></div>
+                
+                <div class="relative z-10 serif text-5xl mb-6 font-bold tracking-wider">
+                    <span class="text-transparent bg-clip-text bg-gradient-to-br from-yellow-300 to-amber-500">A</span> 
+                    <span class="text-white/30 mx-2 text-3xl font-light">&</span> 
+                    <span class="text-transparent bg-clip-text bg-gradient-to-br from-cyan-300 to-blue-500">A</span>
+                </div>
+                <p class="relative z-10 text-white/80 mb-8 text-sm md:text-base leading-relaxed">Welcome to our wedding invitation.</p>
+                <div class="relative z-10 py-2.5 px-6 bg-white/5 rounded-full border border-white/10 flex items-center gap-3">
+                    <i class="fas fa-volume-up text-yellow-300 animate-pulse"></i>
+                    <span class="text-white/60 text-xs font-mono tracking-widest">VOLUME ON</span>
+                </div>
+            </div>
+
+            <!-- Left Door -->
+            <div id="leftDoor" class="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-br from-[#121226] to-[#020210] rounded-l-xl border border-white/10 border-r-0 origin-left transition-transform duration-[1.5s] ease-[cubic-bezier(0.4,0,0.2,1)] z-20 overflow-hidden shadow-[5px_0_15px_rgba(0,0,0,0.5)]">
+                <div class="absolute right-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-yellow-500 to-transparent opacity-80"></div>
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_right,rgba(255,215,0,0.1),transparent_70%)]"></div>
+            </div>
+
+            <!-- Right Door -->
+            <div id="rightDoor" class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-bl from-[#121226] to-[#020210] rounded-r-xl border border-white/10 border-l-0 origin-right transition-transform duration-[1.5s] ease-[cubic-bezier(0.4,0,0.2,1)] z-20 overflow-hidden shadow-[-5px_0_15px_rgba(0,0,0,0.5)]">
+                <div class="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-yellow-500 to-transparent opacity-80"></div>
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(255,215,0,0.1),transparent_70%)]"></div>
+            </div>
+
+            <!-- Wax Seal -->
+            <div id="waxSeal" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-gradient-to-br from-yellow-400 via-amber-600 to-yellow-700 rounded-full z-30 flex items-center justify-center shadow-[0_5px_15px_rgba(0,0,0,0.8),inset_0_2px_4px_rgba(255,255,255,0.4)] transition-all duration-700 ease-in-out group-hover:scale-110">
+                <div class="w-16 h-16 rounded-full border border-yellow-200/30 flex items-center justify-center bg-amber-600/20 shadow-inner">
+                    <span class="serif text-2xl font-bold text-yellow-100 drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]">A<span class="text-lg opacity-80">&</span>A</span>
+                </div>
+            </div>
+
+            <!-- Helper Text -->
+            <div id="tapText" class="absolute -bottom-16 left-1/2 -translate-x-1/2 whitespace-nowrap text-white/40 text-xs tracking-[0.4em] animate-pulse transition-opacity duration-500 z-30">
+                TAP TO OPEN
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 3D Canvas -->
+    <canvas id="canvas"></canvas>
+
+    <!-- Music Player -->
+    <button id="musicToggle" class="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full glass glow-cyan flex items-center justify-center hover:scale-110 transition-transform group">
+        <i id="musicIcon" class="fas fa-music text-cyan-300 text-xl group-hover:text-white transition-colors"></i>
+        <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse hidden" id="musicPulse"></span>
+    </button>
+    <audio id="bgMusic" loop>
+        <source src="https://cdn.pixabay.com/audio/2022/03/24/audio_3d1e18bf97.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="openSound">
+        <source src="https://cdn.pixabay.com/audio/2022/10/24/audio_931225a8e0.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-40 glass">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="serif text-2xl font-semibold">
+                <span class="text-glow" style="color: var(--gold)">A</span>
+                <span class="mx-2 text-white/40">&</span>
+                <span class="text-glow" style="color: var(--cyan)">A</span>
+            </div>
+            <div class="hidden md:flex gap-8 text-sm tracking-widest">
+                <a href="#story" class="hover:text-yellow-300 transition-colors">STORY</a>
+                <a href="#events" class="hover:text-cyan-300 transition-colors">EVENTS</a>
+                <a href="#gallery" class="hover:text-yellow-300 transition-colors">GALLERY</a>
+                <a href="#rsvp" class="hover:text-cyan-300 transition-colors">RSVP</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="relative min-h-screen flex items-center justify-center px-6 pt-20">
+        <div class="relative z-10 text-center max-w-5xl mx-auto">
+            <!-- Floating Ring will be behind this -->
+            <div class="glass-strong rounded-[2.5rem] p-8 md:p-16 glow-gold">
+                <p class="tracking-[0.3em] text-sm text-white/60 mb-6">TOGETHER WITH THEIR FAMILIES</p>
+                <h1 class="serif text-6xl md:text-8xl lg:text-9xl font-bold leading-none mb-6">
+                    <span class="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-amber-100 to-yellow-200 animate-gradient">Aarav</span>
+                    <span class="flex items-center justify-center gap-6 my-4">
+                        <span class="h-px w-20 bg-gradient-to-r from-transparent to-white/50"></span>
+                        <span class="serif text-3xl text-white/80 font-light">&</span>
+                        <span class="h-px w-20 bg-gradient-to-l from-transparent to-white/50"></span>
+                    </span>
+                    <span class="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-200 to-cyan-300 animate-gradient">Anu</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-white/80 mb-12 tracking-wide">are getting married</p>
+                
+                <!-- Countdown -->
+                <div class="grid grid-cols-4 gap-3 md:gap-6 max-w-2xl mx-auto">
+                    <div class="glass rounded-2xl p-4 md:p-6">
+                        <div id="days" class="serif text-3xl md:text-5xl font-bold text-yellow-300">00</div>
+                        <div class="text-xs tracking-widest text-white/60 mt-2">DAYS</div>
+                    </div>
+                    <div class="glass rounded-2xl p-4 md:p-6">
+                        <div id="hours" class="serif text-3xl md:text-5xl font-bold text-yellow-300">00</div>
+                        <div class="text-xs tracking-widest text-white/60 mt-2">HOURS</div>
+                    </div>
+                    <div class="glass rounded-2xl p-4 md:p-6">
+                        <div id="minutes" class="serif text-3xl md:text-5xl font-bold text-cyan-300">00</div>
+                        <div class="text-xs tracking-widest text-white/60 mt-2">MINS</div>
+                    </div>
+                    <div class="glass rounded-2xl p-4 md:p-6">
+                        <div id="seconds" class="serif text-3xl md:text-5xl font-bold text-cyan-300">00</div>
+                        <div class="text-xs tracking-widest text-white/60 mt-2">SECS</div>
+                    </div>
+                </div>
+
+                <div class="mt-12 flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="#events" class="px-8 py-4 bg-gradient-to-r from-yellow-500 to-amber-500 rounded-full font-medium hover:shadow-[0_0_30px_rgba(255,215,0,0.5)] transition-all hover:scale-105">
+                        View Events
+                    </a>
+                    <button id="saveDate" class="px-8 py-4 glass rounded-full font-medium hover:bg-white/10 transition-all">
+                        <i class="far fa-calendar-plus mr-2"></i> Save the Date
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 animate-bounce">
+            <div class="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
+                <div class="w-1 h-3 bg-white/60 rounded-full mt-2 animate-pulse"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- OUR STORY -->
+    <section id="story" class="relative z-10 py-20 px-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-20 reveal">
+                <h2 class="serif text-5xl md:text-6xl font-bold mb-4">Our Story</h2>
+                <div class="w-24 h-1 bg-gradient-to-r from-yellow-400 to-cyan-400 mx-auto rounded-full"></div>
+            </div>
+
+            <div class="relative">
+                <!-- Timeline line -->
+                <div class="absolute left-8 md:left-1/2 top-0 bottom-0 timeline-line -translate-x-1/2"></div>
+
+                <!-- Timeline items -->
+                <div class="space-y-20">
+                    <!-- Item 1 -->
+                    <div class="relative flex flex-col md:flex-row items-center gap-8 reveal">
+                        <div class="md:w-1/2 md:text-right md:pr-16 order-2 md:order-1">
+                            <div class="glass rounded-3xl p-8 inline-block">
+                                <span class="text-yellow-300 font-semibold">2019 • First Meet</span>
+                                <h3 class="serif text-2xl mt-2 mb-3">Coffee & Coincidence</h3>
+                                <p class="text-white/70">Met at a friend's art exhibition. Spilled coffee, sparked conversation.</p>
+                            </div>
+                        </div>
+                        <div class="absolute left-8 md:left-1/2 w-4 h-4 timeline-dot rounded-full -translate-x-1/2 z-10"></div>
+                        <div class="md:w-1/2 md:pl-16 order-1 md:order-2 w-full pl-20 md:pl-16">
+                            <div class="text-6xl opacity-20">01</div>
+                        </div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="relative flex flex-col md:flex-row items-center gap-8 reveal">
+                        <div class="md:w-1/2 md:text-right md:pr-16">
+                            <div class="text-6xl opacity-20 md:ml-auto w-fit">02</div>
+                        </div>
+                        <div class="absolute left-8 md:left-1/2 w-4 h-4 timeline-dot rounded-full -translate-x-1/2 z-10"></div>
+                        <div class="md:w-1/2 md:pl-16 w-full pl-20 md:pl-16">
+                            <div class="glass rounded-3xl p-8 inline-block">
+                                <span class="text-cyan-300 font-semibold">2021 • First Trip</span>
+                                <h3 class="serif text-2xl mt-2 mb-3">Mountains & Promises</h3>
+                                <p class="text-white/70">A week in Manali. Stars, stories, and a silent promise.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="relative flex flex-col md:flex-row items-center gap-8 reveal">
+                        <div class="md:w-1/2 md:text-right md:pr-16 order-2 md:order-1">
+                            <div class="glass rounded-3xl p-8 inline-block">
+                                <span class="text-yellow-300 font-semibold">2023 • The Proposal</span>
+                                <h3 class="serif text-2xl mt-2 mb-3">Under the Same Stars</h3>
+                                <p class="text-white/70">Back to where it started. She said yes before he finished asking.</p>
+                            </div>
+                        </div>
+                        <div class="absolute left-8 md:left-1/2 w-4 h-4 timeline-dot rounded-full -translate-x-1/2 z-10"></div>
+                        <div class="md:w-1/2 md:pl-16 order-1 md:order-2 w-full pl-20 md:pl-16">
+                            <div class="text-6xl opacity-20">03</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EVENTS -->
+    <section id="events" class="relative z-10 py-20 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 reveal">
+                <h2 class="serif text-5xl md:text-6xl font-bold mb-4">Celebration</h2>
+                <p class="text-white/70 max-w-2xl mx-auto">Join us for three days of love, laughter, and traditions</p>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Event 1 -->
+                <div class="group glass rounded-[2rem] p-1 hover:glow-gold transition-all duration-500 reveal">
+                    <div class="bg-gradient-to-b from-white/[0.08] to-transparent rounded-[1.8rem] p-8 h-full">
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 to-amber-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-hands-praying text-2xl text-black"></i>
+                        </div>
+                        <span class="text-yellow-300 text-sm tracking-widest">DAY 01</span>
+                        <h3 class="serif text-3xl font-bold mt-2 mb-6">Haldi & Mehendi</h3>
+                        <div class="space-y-4 text-white/80">
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-calendar mt-1 text-yellow-300"></i>
+                                <div>
+                                    <p class="font-medium">13 December 2025</p>
+                                    <p class="text-sm text-white/60">Saturday • 11:00 AM</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-location-dot mt-1 text-yellow-300"></i>
+                                <div>
+                                    <p class="font-medium">The Leela Gardens</p>
+                                    <p class="text-sm text-white/60">Udaipur, Rajasthan</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="openMap(config.event1.mapQuery)" class="mt-8 w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-yellow-400/50 transition-all flex items-center justify-center gap-2 group/btn">
+                            <span>View on Google Maps</span>
+                            <i class="fas fa-arrow-up-right-from-square text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Event 2 - Featured -->
+                <div class="group glass-strong rounded-[2rem] p-1 glow-cyan lg:-mt-8 lg:mb-8 transition-all duration-500 reveal" style="transform: scale(1.05);">
+                    <div class="bg-gradient-to-b from-cyan-500/[0.15] to-transparent rounded-[1.8rem] p-8 h-full border border-cyan-400/20">
+                        <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-yellow-400 to-cyan-400 text-black text-xs font-bold rounded-full tracking-widest">
+                            MAIN EVENT
+                        </div>
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-ring text-2xl text-white"></i>
+                        </div>
+                        <span class="text-cyan-300 text-sm tracking-widest">DAY 02</span>
+                        <h3 class="serif text-3xl font-bold mt-2 mb-6">Wedding Ceremony</h3>
+                        <div class="space-y-4 text-white/90">
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-calendar mt-1 text-cyan-300"></i>
+                                <div>
+                                    <p class="font-medium">15 December 2025</p>
+                                    <p class="text-sm text-white/70">Monday • 7:00 PM • Muhurat: 7:32 PM</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-location-dot mt-1 text-cyan-300"></i>
+                                <div>
+                                    <p class="font-medium">Jagmandir Island Palace</p>
+                                    <p class="text-sm text-white/70">Lake Pichola, Udaipur</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="openMap(config.mainEvent.mapQuery)" class="mt-8 w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:shadow-[0_0_30px_rgba(0,255,255,0.4)] transition-all font-medium flex items-center justify-center gap-2">
+                            <span>View on Google Maps</span>
+                            <i class="fas fa-arrow-up-right-from-square text-xs"></i>
+                        </button>
+                        
+                        <!-- Copy Address -->
+                        <button onclick="copyAddress(this, config.mainEvent.address)" class="mt-3 w-full py-2.5 rounded-xl glass hover:bg-white/10 transition-all text-sm flex items-center justify-center gap-2">
+                            <i class="far fa-copy"></i>
+                            <span>Copy Address</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Event 3 -->
+                <div class="group glass rounded-[2rem] p-1 hover:glow-gold transition-all duration-500 reveal">
+                    <div class="bg-gradient-to-b from-white/[0.08] to-transparent rounded-[1.8rem] p-8 h-full">
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-champagne-glasses text-2xl text-black"></i>
+                        </div>
+                        <span class="text-amber-300 text-sm tracking-widest">DAY 03</span>
+                        <h3 class="serif text-3xl font-bold mt-2 mb-6">Reception</h3>
+                        <div class="space-y-4 text-white/80">
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-calendar mt-1 text-amber-300"></i>
+                                <div>
+                                    <p class="font-medium">16 December 2025</p>
+                                    <p class="text-sm text-white/60">Tuesday • 8:00 PM</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-location-dot mt-1 text-amber-300"></i>
+                                <div>
+                                    <p class="font-medium">Taj Fateh Prakash</p>
+                                    <p class="text-sm text-white/60">City Palace, Udaipur</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="openMap(config.event3.mapQuery)" class="mt-8 w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-400/50 transition-all flex items-center justify-center gap-2 group/btn">
+                            <span>View on Google Maps</span>
+                            <i class="fas fa-arrow-up-right-from-square text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3D GALLERY -->
+    <section id="gallery" class="relative z-10 py-20 px-6 overflow-hidden">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 reveal">
+                <h2 class="serif text-5xl md:text-6xl font-bold mb-4">Moments</h2>
+                <p class="text-white/70">Swipe through our favorite memories</p>
+            </div>
+
+            <div class="relative h-[500px] flex items-center justify-center">
+                <div class="carousel-3d w-full max-w-4xl h-[400px]">
+                    <div id="carouselInner" class="carousel-inner relative w-full h-full">
+                        <!-- Items injected by JS -->
+                    </div>
+                </div>
+                
+                <!-- Controls -->
+                <button id="prevBtn" class="absolute left-4 md:left-10 top-1/2 -translate-y-1/2 w-12 h-12 glass rounded-full flex items-center justify-center hover:glow-cyan transition-all z-20">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button id="nextBtn" class="absolute right-4 md:right-10 top-1/2 -translate-y-1/2 w-12 h-12 glass rounded-full flex items-center justify-center hover:glow-cyan transition-all z-20">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- RSVP & SHAGUN -->
+    <section id="rsvp" class="relative z-10 py-20 px-6">
+        <div class="max-w-6xl mx-auto grid lg:grid-cols-5 gap-8">
+            <!-- RSVP Form -->
+            <div class="lg:col-span-3 glass-strong rounded-[2rem] p-8 md:p-12 reveal">
+                <h3 class="serif text-4xl font-bold mb-2">Will you join us?</h3>
+                <p class="text-white/70 mb-8">Please RSVP by November 15th</p>
+                
+                <form id="rsvpForm" class="space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm text-white/70 mb-2">Your Name *</label>
+                            <input type="text" required class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:border-cyan-400 focus:outline-none focus:bg-white/[0.07] transition-all" placeholder="Enter your full name">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-white/70 mb-2">Phone Number *</label>
+                            <input type="tel" required class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:border-cyan-400 focus:outline-none focus:bg-white/[0.07] transition-all" placeholder="+91 XXXXX XXXXX">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm text-white/70 mb-3">Number of Guests</label>
+                        <div class="flex gap-3">
+                            <button type="button" class="guest-btn px-6 py-3 glass rounded-xl hover:border-yellow-400/50 border border-transparent transition-all" data-guests="1">1</button>
+                            <button type="button" class="guest-btn px-6 py-3 glass rounded-xl hover:border-yellow-400/50 border border-transparent transition-all bg-white/10 border-yellow-400/50" data-guests="2">2</button>
+                            <button type="button" class="guest-btn px-6 py-3 glass rounded-xl hover:border-yellow-400/50 border border-transparent transition-all" data-guests="3">3</button>
+                            <button type="button" class="guest-btn px-6 py-3 glass rounded-xl hover:border-yellow-400/50 border border-transparent transition-all" data-guests="4">4+</button>
+                        </div>
+                        <input type="hidden" id="guestCount" value="2">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-white/70 mb-2">Message (Optional)</label>
+                        <textarea rows="3" class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:border-cyan-400 focus:outline-none focus:bg-white/[0.07] transition-all resize-none" placeholder="Send your blessings..."></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full py-4 bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-500 rounded-xl font-semibold text-black hover:shadow-[0_0_40px_rgba(255,215,0,0.5)] transition-all hover:scale-[1.02]">
+                        Confirm RSVP ✓
+                    </button>
+                </form>
+
+                <div id="rsvpSuccess" class="hidden text-center py-12">
+                    <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center">
+                        <i class="fas fa-check text-3xl text-white"></i>
+                    </div>
+                    <h4 class="serif text-2xl mb-2">Thank you!</h4>
+                    <p class="text-white/70">We've saved your RSVP. See you soon! 💛</p>
+                </div>
+            </div>
+
+            <!-- Virtual Shagun -->
+            <div class="lg:col-span-2 space-y-8">
+                <div class="glass rounded-[2rem] p-8 text-center reveal">
+                    <div class="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-yellow-400/20 to-amber-600/20 border border-yellow-400/30 flex items-center justify-center">
+                        <i class="fas fa-gift text-3xl text-yellow-300"></i>
+                    </div>
+                    <h4 class="serif text-2xl font-bold mb-3">Virtual Shagun</h4>
+                    <p class="text-white/70 text-sm mb-6">Your blessings are enough, but if you wish to send a gift</p>
+                    <button id="showQR" class="w-full py-3 glass rounded-xl hover:glow-gold transition-all font-medium">
+                        Show UPI QR Code
+                    </button>
+                </div>
+
+                <div class="glass rounded-[2rem] p-8 reveal">
+                    <h4 class="font-semibold mb-4 flex items-center gap-2">
+                        <i class="fas fa-circle-info text-cyan-400"></i>
+                        Quick Info
+                    </h4>
+                    <ul class="space-y-3 text-sm text-white/80">
+                        <li class="flex gap-3"><i class="fas fa-shirt text-yellow-300 mt-0.5"></i><span>Dress Code: Indian Festive / Formal</span></li>
+                        <li class="flex gap-3"><i class="fas fa-child text-cyan-300 mt-0.5"></i><span>Kids are welcome!</span></li>
+                        <li class="flex gap-3"><i class="fas fa-car text-yellow-300 mt-0.5"></i><span>Valet parking available</span></li>
+                        <li class="flex gap-3"><i class="fas fa-phone text-cyan-300 mt-0.5"></i><span>Queries: +91 98765 43210</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="relative z-10 border-t border-white/10 py-12 px-6">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="serif text-3xl mb-4">
+                <span class="text-yellow-300">A</span>
+                <span class="mx-3 text-white/30">•</span>
+                <span class="text-cyan-300">A</span>
+            </div>
+            <p class="text-white/60 mb-2">Made with 💛 for our big day</p>
+            <p class="text-xs text-white/40">15 • 12 • 2025 • Udaipur</p>
+        </div>
+    </footer>
+
+    <!-- QR Modal -->
+    <div id="qrModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-6 bg-black/80 backdrop-blur-md">
+        <div class="glass-strong rounded-[2rem] p-8 max-w-sm w-full text-center relative">
+            <button id="closeQR" class="absolute top-4 right-4 w-8 h-8 glass rounded-full flex items-center justify-center hover:bg-white/10">
+                <i class="fas fa-times text-sm"></i>
+            </button>
+            <h4 class="serif text-2xl font-bold mb-2">Send Your Blessings</h4>
+            <p class="text-white/70 text-sm mb-6">Scan with any UPI app</p>
+            <div class="bg-white p-4 rounded-2xl inline-block mb-4">
+                <img id="qrImage" src="" alt="UPI QR" class="w-48 h-48">
+            </div>
+            <p id="upiIdText" class="font-mono text-sm bg-white/5 py-2 px-4 rounded-lg inline-block"></p>
+            <button onclick="copyUPI()" class="mt-4 w-full py-2.5 glass rounded-xl hover:bg-white/10 text-sm">
+                <i class="far fa-copy mr-2"></i>Copy UPI ID
+            </button>
+        </div>
+    </div>
+
+    <!-- Fullscreen Image Modal -->
+    <div id="imageModal" class="fixed inset-0 z-[110] hidden items-center justify-center p-4 bg-black/90 backdrop-blur-xl">
+        <button id="closeImageModal" class="absolute top-6 right-6 md:top-8 md:right-8 w-12 h-12 glass rounded-full flex items-center justify-center hover:bg-white/10 hover:glow-cyan transition-all z-10">
+            <i class="fas fa-times text-xl"></i>
+        </button>
+        <img id="modalImage" src="" alt="Fullscreen Memory" class="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.8)]">
+    </div>
+
+    <!-- Scripts -->
+    <!-- Canvas Confetti for Celebration effects -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="config.js"></script>
+    <script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"></script>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+            "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.5/+esm"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+        import { gsap } from 'gsap';
+        import { ScrollTrigger } from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/ScrollTrigger.js';
+        
+        gsap.registerPlugin(ScrollTrigger);
+
+        // ===== THREE.JS SCENE =====
+        const canvas = document.getElementById('canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 30;
+
+        const renderer = new THREE.WebGLRenderer({ 
+            canvas, 
+            antialias: true,
+            alpha: true,
+            powerPreference: "high-performance"
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // Post-processing for bloom glow
+        const composer = new EffectComposer(renderer);
+        composer.addPass(new RenderPass(scene, camera));
+        const bloomPass = new UnrealBloomPass(
+            new THREE.Vector2(window.innerWidth, window.innerHeight),
+            1.2,  // strength
+            0.5,  // radius
+            0.2   // threshold
+        );
+        composer.addPass(bloomPass);
+
+        // ===== PARTICLE SYSTEM (Stitch Style) =====
+        const particleCount = 8000;
+        const particlesGeometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        const colors = new Float32Array(particleCount * 3);
+        const sizes = new Float32Array(particleCount);
+        const velocities = [];
+
+        const gold = new THREE.Color(0xffd700);
+        const cyan = new THREE.Color(0x00ffff);
+
+        for (let i = 0; i < particleCount; i++) {
+            const i3 = i * 3;
+            
+            // Spherical distribution
+            const radius = 40 + Math.random() * 60;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos((Math.random() * 2) - 1);
+            
+            positions[i3] = radius * Math.sin(phi) * Math.cos(theta);
+            positions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+            positions[i3 + 2] = radius * Math.cos(phi);
+
+            // Alternate gold and cyan
+            const color = i % 2 === 0 ? gold : cyan;
+            colors[i3] = color.r;
+            colors[i3 + 1] = color.g;
+            colors[i3 + 2] = color.b;
+
+            sizes[i] = Math.random() * 2 + 0.5;
+            
+            velocities.push({
+                x: (Math.random() - 0.5) * 0.01,
+                y: (Math.random() - 0.5) * 0.01,
+                z: (Math.random() - 0.5) * 0.01
+            });
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+        particlesGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+        // Custom shader for glowing particles
+        const particleMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                pointTexture: { value: createPointTexture() }
+            },
+            vertexShader: `
+                attribute float size;
+                varying vec3 vColor;
+                void main() {
+                    vColor = color;
+                    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                    gl_PointSize = size * (300.0 / -mvPosition.z);
+                    gl_Position = projectionMatrix * mvPosition;
+                }
+            `,
+            fragmentShader: `
+                uniform sampler2D pointTexture;
+                varying vec3 vColor;
+                void main() {
+                    float alpha = texture2D(pointTexture, gl_PointCoord).a;
+                    gl_FragColor = vec4(vColor, alpha * 0.8);
+                }
+            `,
+            transparent: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            vertexColors: true
+        });
+
+        function createPointTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 64;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+            gradient.addColorStop(0, 'rgba(255,255,255,1)');
+            gradient.addColorStop(0.2, 'rgba(255,255,255,0.8)');
+            gradient.addColorStop(0.4, 'rgba(255,255,255,0.3)');
+            gradient.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 64, 64);
+            const texture = new THREE.CanvasTexture(canvas);
+            return texture;
+        }
+
+        const particles = new THREE.Points(particlesGeometry, particleMaterial);
+        scene.add(particles);
+
+        // ===== MOUSE INTERACTION =====
+        const mouse = new THREE.Vector2();
+        let mouseX = 0, mouseY = 0;
+        let isTouching = false;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX - window.innerWidth / 2) * 0.001;
+            mouseY = (e.clientY - window.innerHeight / 2) * 0.001;
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                isTouching = true;
+                mouseX = (e.touches[0].clientX - window.innerWidth / 2) * 0.001;
+                mouseY = (e.touches[0].clientY - window.innerHeight / 2) * 0.001;
+            }
+        });
+
+        // Gyroscope for mobile
+        window.addEventListener('deviceorientation', (e) => {
+            if (e.gamma && e.beta) {
+                mouseX = e.gamma * 0.001;
+                mouseY = e.beta * 0.001;
+            }
+        });
+
+        // ===== ANIMATION LOOP =====
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const elapsed = clock.getElapsedTime();
+            
+            // Animate particles
+            const positions = particlesGeometry.attributes.position.array;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const i3 = i * 3;
+                const vel = velocities[i];
+                
+                // --- MOUSE BLAST/REPEL EFFECT ---
+                const blastRadius = 15;
+                const blastStrength = 0.15;
+
+                // Project mouse into the 3D space for interaction
+                const mouse3D_x = mouse.x * 40;
+                const mouse3D_y = mouse.y * 40;
+
+                const dx = positions[i3] - mouse3D_x;
+                const dy = positions[i3 + 1] - mouse3D_y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < blastRadius) {
+                    const force = (blastRadius - dist) / blastRadius;
+                    vel.x += (dx / dist) * force * blastStrength;
+                    vel.y += (dy / dist) * force * blastStrength;
+                }
+                
+                // Update positions
+                positions[i3] += vel.x;
+                positions[i3 + 1] += vel.y;
+                positions[i3 + 2] += vel.z;
+                
+                // Keep in bounds (spherical)
+                const distFromCenter = Math.sqrt(
+                    positions[i3]**2 + positions[i3+1]**2 + positions[i3+2]**2
+                );
+                
+                if (distFromCenter > 100) {
+                    positions[i3] *= 0.99;
+                    positions[i3 + 1] *= 0.99;
+                    positions[i3 + 2] *= 0.99;
+                }
+                
+                // Stronger Damping for responsive feel
+                vel.x *= 0.97;
+                vel.y *= 0.97;
+                vel.z *= 0.97;
+            }
+            
+            particlesGeometry.attributes.position.needsUpdate = true;
+            
+            // Camera parallax
+            camera.position.x += (mouseX * 5 - camera.position.x) * 0.02;
+            camera.position.y += (-mouseY * 5 - camera.position.y) * 0.02;
+            camera.lookAt(0, 0, 0);
+            
+            // Rotate particle field slowly
+            particles.rotation.y = elapsed * 0.04;
+            particles.rotation.x = Math.sin(elapsed * 0.02) * 0.15;
+            
+            composer.render();
+        }
+        
+        animate();
+
+        // ===== RESIZE =====
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+            
+            // Scale down 3D on mobile
+            if (window.innerWidth < 768) {
+                camera.position.z = 35;
+            } else {
+                camera.position.z = 30;
+            }
+        });
+        window.dispatchEvent(new Event('resize'));
+
+        // ===== GSAP SCROLL ANIMATIONS =====
+        // Generic reveal for elements with the .reveal class
+        gsap.utils.toArray('.reveal').forEach(el => {
+            // Exclude timeline items, they have a custom animation below
+            if (el.closest('#story')) return;
+
+            gsap.from(el, {
+                scrollTrigger: {
+                    trigger: el,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse'
+                },
+                y: 60,
+                opacity: 0,
+                duration: 1,
+                ease: 'power3.out'
+            });
+        });
+
+        // --- Enhanced "Our Story" Timeline Animation ---
+        const storySection = document.querySelector('#story');
+
+        // 1. Animate the line drawing itself
+        gsap.from('.timeline-line', {
+            scrollTrigger: {
+                trigger: storySection,
+                start: 'top 40%',
+                end: 'bottom 60%',
+                scrub: 1
+            },
+            scaleY: 0,
+            transformOrigin: 'top center',
+            ease: 'none'
+        });
+
+        // 2. Animate each item as it comes into view
+        gsap.utils.toArray('#story .reveal').forEach((item) => {
+            const dot = item.querySelector('.timeline-dot');
+            const content = item.querySelector('.glass');
+            const number = item.querySelector('.text-6xl');
+
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: item,
+                    start: 'top 70%',
+                    toggleActions: 'play none none reverse'
+                }
+            });
+
+            // Animate dot pop and content slide-in
+            tl.from(dot, { scale: 0, ease: 'back.out(2)', duration: 0.6 }, 'start');
+            const isRightSide = item.children[0].classList.contains('md:pr-16') === false;
+            const xFrom = (window.innerWidth < 768) ? 50 : (isRightSide ? 100 : -100);
+            tl.from([content, number], { opacity: 0, x: xFrom, duration: 1, ease: 'power3.out', stagger: 0.1 }, 'start');
+        });
+    </script>
+
+    <script>
+        // ===== INITIALIZE DYNAMIC CONTENT FROM CONFIG =====
+        document.addEventListener('DOMContentLoaded', () => {
+            // This function runs once the page is fully loaded.
+            
+            // Set UPI Details from config.js
+            const upiId = config.upi.id;
+            const upiName = encodeURIComponent(config.upi.name);
+            const qrUrl = config.upi.qrImage || `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=${upiId}&pn=${upiName}&am=&cu=INR`;
+            
+            const qrImageEl = document.getElementById('qrImage');
+            if (qrImageEl) qrImageEl.src = qrUrl;
+            
+            const upiIdTextEl = document.getElementById('upiIdText');
+            if (upiIdTextEl) upiIdTextEl.textContent = upiId;
+        });
+
+        // ===== COUNTDOWN TIMER =====
+        const weddingDate = new Date(config.weddingDate).getTime();
+        
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const diff = weddingDate - now;
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+        
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        // ===== MUSIC PLAYER =====
+        const music = document.getElementById('bgMusic');
+        const musicToggle = document.getElementById('musicToggle');
+        const musicIcon = document.getElementById('musicIcon');
+        const musicPulse = document.getElementById('musicPulse');
+        let isPlaying = false;
+
+        music.volume = 0.7;
+        
+        musicToggle.addEventListener('click', () => {
+            if (isPlaying) {
+                music.pause();
+                musicIcon.classList.remove('fa-pause');
+                musicIcon.classList.add('fa-music');
+                musicPulse.classList.add('hidden');
+                isPlaying = false;
+            } else {
+                music.play().catch(() => {
+                    alert('Click anywhere first to enable audio');
+                });
+                musicIcon.classList.remove('fa-music');
+                musicIcon.classList.add('fa-pause');
+                musicPulse.classList.remove('hidden');
+                isPlaying = true;
+            }
+        });
+
+        // Welcome Overlay & Audio Autoplay Fix
+        const welcomeOverlay = document.getElementById('welcomeOverlay');
+        const inviteWrapper = document.getElementById('inviteWrapper');
+        const leftDoor = document.getElementById('leftDoor');
+        const rightDoor = document.getElementById('rightDoor');
+        const waxSeal = document.getElementById('waxSeal');
+        const tapText = document.getElementById('tapText');
+        const openSound = document.getElementById('openSound');
+        openSound.volume = 0.5;
+        
+        inviteWrapper.addEventListener('click', () => {
+            openSound.play();
+            waxSeal.style.opacity = '0';
+            waxSeal.style.transform = 'translate(-50%, -50%) scale(1.5)';
+            tapText.style.opacity = '0';
+            
+            leftDoor.style.transform = 'rotateY(-130deg)';
+            rightDoor.style.transform = 'rotateY(130deg)';
+            
+            setTimeout(() => {
+                welcomeOverlay.style.opacity = '0';
+                setTimeout(() => welcomeOverlay.classList.add('hidden'), 1000);
+                
+                music.play().then(() => {
+                    musicIcon.classList.remove('fa-music');
+                    musicIcon.classList.add('fa-pause');
+                    musicPulse.classList.remove('hidden');
+                    isPlaying = true;
+                }).catch((err) => console.log("Audio play failed:", err));
+            }, 2500);
+        }, { once: true });
+
+        // ===== RSVP FORM =====
+        document.querySelectorAll('.guest-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.guest-btn').forEach(b => {
+                    b.classList.remove('bg-white/10', 'border-yellow-400/50');
+                    b.classList.add('border-transparent');
+                });
+                btn.classList.add('bg-white/10', 'border-yellow-400/50');
+                btn.classList.remove('border-transparent');
+                document.getElementById('guestCount').value = btn.dataset.guests;
+            });
+        });
+
+        document.getElementById('rsvpForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            document.getElementById('rsvpForm').classList.add('hidden');
+            document.getElementById('rsvpSuccess').classList.remove('hidden');
+            
+            // Confetti effect on RSVP
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#FFD700', '#00FFFF', '#ffffff']
+            });
+        });
+
+        // ===== QR MODAL =====
+        const qrModal = document.getElementById('qrModal');
+        document.getElementById('showQR').addEventListener('click', () => {
+            qrModal.classList.remove('hidden');
+            qrModal.classList.add('flex');
+        });
+        document.getElementById('closeQR').addEventListener('click', () => {
+            qrModal.classList.add('hidden');
+            qrModal.classList.remove('flex');
+        });
+        qrModal.addEventListener('click', (e) => {
+            if (e.target === qrModal) {
+                qrModal.classList.add('hidden');
+                qrModal.classList.remove('flex');
+            }
+        });
+
+        // ===== IMAGE MODAL =====
+        const imageModal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        
+        function openImageModal(src) {
+            modalImage.src = src;
+            imageModal.classList.remove('hidden');
+            imageModal.classList.add('flex');
+        }
+        
+        document.getElementById('closeImageModal').addEventListener('click', () => {
+            imageModal.classList.add('hidden');
+            imageModal.classList.remove('flex');
+        });
+        
+        imageModal.addEventListener('click', (e) => {
+            if (e.target === imageModal) {
+                imageModal.classList.add('hidden');
+                imageModal.classList.remove('flex');
+            }
+        });
+
+        // ===== UTILITY FUNCTIONS =====
+        function openMap(query) {
+            window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`, '_blank');
+        }
+
+        function copyAddress(btn, address) {
+            navigator.clipboard.writeText(address).then(() => {
+                const original = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check mr-2"></i>Copied!';
+                btn.classList.add('border-green-400/50');
+                setTimeout(() => {
+                    btn.innerHTML = original;
+                    btn.classList.remove('border-green-400/50');
+                }, 2000);
+            });
+        }
+
+        function copyUPI() {
+            navigator.clipboard.writeText(config.upi.id).then(() => {
+                alert('UPI ID copied to clipboard!');
+            });
+        }
+
+        document.getElementById('saveDate').addEventListener('click', () => {
+            alert(`📅 Save the Date: 15th December 2025\n\nAdd to your calendar: ${config.coupleName} Wedding`);
+            
+            // Confetti effect on Save the Date
+            confetti({
+                particleCount: 100,
+                spread: 60,
+                origin: { y: 0.8 },
+                colors: ['#FFD700', '#00FFFF']
+            });
+        });
+
+        // ===== 3D GALLERY =====
+        const galleryImages = config.galleryImages;
+
+        const carouselInner = document.getElementById('carouselInner');
+        const itemCount = galleryImages.length;
+        const angle = 360 / itemCount;
+        let currentRotation = 0;
+
+        galleryImages.forEach((src, i) => {
+            const item = document.createElement('div');
+            item.className = 'carousel-item w-72 h-96 cursor-pointer';
+            item.style.transform = `rotateY(${i * angle}deg) translateZ(320px)`;
+            item.innerHTML = `
+                <div class="item-inner w-full h-full rounded-3xl overflow-hidden glass p-2 transition-all duration-500">
+                    <img src="${src}" class="w-full h-full object-cover rounded-2xl" alt="Memory ${i + 1}">
+                </div>
+            `;
+            item.addEventListener('click', () => openImageModal(src));
+            carouselInner.appendChild(item);
+        });
+
+        function rotateCarousel(direction) {
+            currentRotation += direction * angle;
+            carouselInner.style.transform = `rotateY(${currentRotation}deg)`;
+            
+            document.querySelectorAll('.carousel-item').forEach((item, i) => {
+                const itemAngle = (i * angle + currentRotation) % 360;
+                const normalized = ((itemAngle + 180) % 360) - 180;
+                const absNormalized = Math.abs(normalized);
+
+                const cosFactor = (Math.cos(normalized * Math.PI / 180) + 1) / 2; // 1 at front, 0 at back
+                const scale = 0.6 + cosFactor * 0.5; // Scale from 0.6 to 1.1
+                const opacity = 0.5 + cosFactor * 0.5; // Opacity from 0.5 to 1
+                const zIndex = Math.round(cosFactor * itemCount);
+                
+                item.style.transform = `rotateY(${i * angle}deg) translateZ(320px) scale(${scale})`;
+                item.style.opacity = opacity;
+                item.style.zIndex = zIndex;
+
+                const innerDiv = item.querySelector('.item-inner');
+                absNormalized < 30 ? innerDiv.classList.add('glow-cyan') : innerDiv.classList.remove('glow-cyan');
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => rotateCarousel(1));
+        document.getElementById('nextBtn').addEventListener('click', () => rotateCarousel(-1));
+
+        // Initialize
+        rotateCarousel(0);
+
+        // Auto-rotate gallery
+        setInterval(() => rotateCarousel(-1), 4000);
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(a.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // ===== SCROLL PROGRESS BAR =====
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('scroll-progress').style.width = scrolled + '%';
+        });
+
+        // ===== FLOATING HEARTS ON CLICK =====
+        document.addEventListener('click', function(e) {
+            // Don't spawn hearts if clicking buttons or links
+            if(e.target.closest('button') || e.target.closest('a') || e.target.closest('input')) return;
+            
+            const heart = document.createElement('i');
+            heart.className = 'fas fa-heart floating-heart';
+            heart.style.left = (e.clientX - 10) + 'px';
+            heart.style.top = (e.clientY - 10) + 'px';
+            
+            const isCyan = Math.random() > 0.5;
+            heart.style.color = isCyan ? 'var(--cyan)' : 'var(--gold)';
+            heart.style.textShadow = isCyan ? '0 0 15px rgba(0,255,255,0.8)' : '0 0 15px rgba(255,215,0,0.8)';
+            
+            document.body.appendChild(heart);
+            
+            setTimeout(() => heart.remove(), 1500);
+        });
+
+        // ===== CUSTOM CURSOR =====
+        if (window.innerWidth >= 768) {
+            const cursor = document.getElementById('custom-cursor');
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+            });
+            
+            document.querySelectorAll('a, button, input, textarea, .carousel-item').forEach(el => {
+                el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover'));
+                el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hover'));
+            });
+        }
+    </script>
+</body>
+</html>
